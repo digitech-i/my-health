@@ -27,15 +27,15 @@ jobs:
   
     - name: Build Apk
       run : go build
+      
+    - name: Go test
+      run : go test ./...
   test:
     needs: build
     runs-on: ubuntu-latest
     steps:
     - name: Initialize Go Module
       run : go mod init my-health
-
-    - name: Go test
-      run : go test ./...
 
     - name: Install golint
       run : go install golang.org/x/lint/golint@latest
