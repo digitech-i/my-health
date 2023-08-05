@@ -17,6 +17,9 @@ jobs:
     - name: Setup Go environment
       uses: actions/setup-go@v4.0.1
 
+    - name: Initialize Go Module
+      run: go mod init my-health
+      
     - name: Build and Test
       run: |
         go build
