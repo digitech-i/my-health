@@ -23,6 +23,8 @@ jobs:
       run : go mod init my-health
 
   test:
+  runs-on: ubuntu-latest
+  steps:
     - name: Golang Tidy
       run : go mod tidy
     - name: Build and Test
