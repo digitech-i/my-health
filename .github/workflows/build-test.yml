@@ -1,0 +1,27 @@
+name: Build and Test
+
+on: [pull_request]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: go1.17.1
+
+    - name: Build and Test
+      run: |
+        go build
+        go test ./...
+    
+    - name: Install golangci-lint
+      run: GO111MODULE=on go get github.com/golangci/golangci-lint/cmd/[email protected]
+
+    - name: Lint
+      run: golangci-lint run
