@@ -1,7 +1,10 @@
 name: Build and Test
 
-on: [pull_request]
-
+on: 
+  pull_request:
+    branches:
+      - main
+      - '01_test-ci-pipeline'
 jobs:
   build-and-test:
     runs-on: ubuntu-latest
