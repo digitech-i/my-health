@@ -14,10 +14,8 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Set up Go
-      uses: actions/setup-go@v2
-      with:
-        go-version: go1.17.1
+    - name: Setup Go environment
+      uses: actions/setup-go@v4.0.1
 
     - name: Build and Test
       run: |
