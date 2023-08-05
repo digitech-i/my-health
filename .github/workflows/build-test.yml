@@ -27,9 +27,8 @@ jobs:
         go build
         go test ./...
     
-    - name: Install golangci-lint
-      run : go install github.com/golangci/golangci-lint/cmd/[email protected]
+    - name: Install golint
+      run : go install golang.org/x/lint/golint@latest
 
-
-    - name: Lint
-      run : golangci-lint run
+    - name: Run golint
+      run : golint ./...
