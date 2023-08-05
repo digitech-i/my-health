@@ -18,15 +18,17 @@ jobs:
       uses: actions/setup-go@v4.0.1
 
     - name: Initialize Go Module
-      run: go mod init my-health
-      
+      run : go mod init my-health
+
+    - name: Golang Tidy
+      run : go mod tidy
     - name: Build and Test
-      run: |
+      run : |
         go build
         go test ./...
     
     - name: Install golangci-lint
-      run: GO111MODULE=on go get github.com/golangci/golangci-lint/cmd/[email protected]
+      run : GO111MODULE=on go get github.com/golangci/golangci-lint/cmd/[email protected]
 
     - name: Lint
-      run: golangci-lint run
+      run : golangci-lint run
