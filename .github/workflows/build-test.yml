@@ -19,12 +19,13 @@ jobs:
     - name: Setup Go environment
       uses: actions/setup-go@v4.0.1
 
-    - name: Initialize Go Module
-      run : go mod init my-health
 
   test:
     runs-on: ubuntu-latest
     steps:
+    - name: Initialize Go Module
+      run : go mod init my-health
+      
     - name: Golang Tidy
       run : go mod tidy
     - name: Build and Test
