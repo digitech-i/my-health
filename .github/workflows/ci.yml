@@ -34,8 +34,10 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
-    - name: Initialize Go Module
-      run : go mod init my-health
+    - name  : golangci-lint
+      uses: golangci/golangci-lint-action@v3
+      with:
+        version: v1.54
 
     - name: Install golint
       run : go install golang.org/x/lint/golint@latest
