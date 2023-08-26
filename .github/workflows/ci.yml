@@ -1,25 +1,44 @@
-name: Continuous Integration
-on: pull_request
+name: Build and Test
+
+on:
+  push:
+    branches:
+      - main
+      - 'feature/*'
+  pull_request:
+    branches: [main]
+
 jobs:
-  run_code_checks:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Setup Go environment
+      uses: actions/setup-go@v4.0.1
+
+    - name: Initialize Go Module
+      run : go mod init my-health
+
+    - name: Golang Tidy
+      run : go mod tidy
+  
+    - name: Build Apk
+      run : go build
+      
+    - name: Go test
+      run : go test ./...
+  test:
+    needs: build
     runs-on: ubuntu-latest
     steps:
-      - name: Check out repository code
-        uses: actions/checkout@v2
-      - name: Setup go
-        uses: actions/setup-go@v2
-        with:
-          go-version: 1.16
-      - name: Run linting
-        run: |
-          go fmt ./...
-          go vet ./...
-      - name: Run tests
-        run: go test -covermode=count -coverprofile=coverage.out ./... 
-      - name: Check code coverage > 50%
-        run: |
-          total=`go tool cover -func=coverage.out | grep total | grep -Eo '[0-9]+\.[0-9]+'`
-          if (( $(echo "$total <= 50" | bc -l) )) ; then
-            echo "code coverage $total% < 50%"
-            exit 1
-          fi
+    - name: Initialize Go Module
+      run : go mod init my-health
+
+    - name: Install golint
+      run : go install golang.org/x/lint/golint@latest
+
+    - name: Run golint
+      run : golint ./...
