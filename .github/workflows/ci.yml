@@ -30,17 +30,18 @@ jobs:
       
     - name: Go test
       run : go test ./...
-  test:
+      
+  golangci:
+    name: lint
     needs: build
     runs-on: ubuntu-latest
     steps:
-    - name  : golangci-lint
-      uses: golangci/golangci-lint-action@v3
-      with:
-        version: v1.54
-
-    - name: Install golint
-      run : go install golang.org/x/lint/golint@latest
-
-    - name: Run golint
-      run : golint ./...
+      - uses: actions/checkout@v3
+      - uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+          cache: false
+      - name: golangci-lint
+        uses: golangci/golangci-lint-action@v3
+        with:
+          version: v1.54
