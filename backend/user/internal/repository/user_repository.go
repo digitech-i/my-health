@@ -1,39 +1,40 @@
 package repository
 
 import (
-	"errors"
+	"database/sql"
 	"myhealth/backend/user/internal/model"
-	"sync"
 )
 
-var (
-	users     map[string]model.User
-	usersLock sync.RWMutex
-)
-
-func init() {
-	users = make(map[string]model.User)
+type UserRepository struct {
+	db *sql.DB
 }
 
-func SaveUser(user model.User) error {
-	usersLock.Lock()
-	defer usersLock.Unlock()
+func NewUserRepository(db *sql.DB) *UserRepository {
+	return &UserRepository{db: db}
+}
 
-	if _, exists := users[user.ID]; exists {
-		return errors.New("user already exists!")
+func (r *UserRepository) SaveUser(user model.User) error {
+	_, err := r.db.Exec("INSERT INTO users (id, username, email) VALUES (?, ?, ?)", user.ID, user.Username, user.Email)
+	if err != nil {
+		return err
 	}
-
-	users[user.ID] = user
 	return nil
 }
 
-func GetAllUsers() []model.User {
-	usersLock.RLock()
-	defer usersLock.RUnlock()
+func (r *UserRepository) GetAllUsers() ([]model.User, error) {
+	rows, err := r.db.Query("SELECT id, username, email FROM users")
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
 
-	usersList := make([]model.User, 0, len(users))
-	for _, user := range users {
+	usersList := make([]model.User, 0)
+	for rows.Next() {
+		var user model.User
+		if err := rows.Scan(&user.ID, &user.Username, &user.Email); err != nil {
+			return nil, err
+		}
 		usersList = append(usersList, user)
 	}
-	return usersList
+	return usersList, nil
 }

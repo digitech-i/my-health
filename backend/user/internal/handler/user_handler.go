@@ -8,22 +8,22 @@ import (
 )
 
 type UserHandler struct {
-	UserService *service.UserService
+	userService service.UserService
 }
 
-func NewUserHandler(userService *service.UserService) *UserHandler {
-	return &UserHandler{UserService: userService}
+func NewUserHandler(userService service.UserService) *UserHandler {
+	return &UserHandler{userService: userService}
 }
 
-func (h *UserHandler) AddUser(w http.ResponseWriter, r *http.Request) {
-	var newUser model.User
-	err := json.NewDecoder(r.Body).Decode(&newUser)
+func (h *UserHandler) CreateUser(w http.ResponseWriter, r *http.Request) {
+	var user model.User
+	err := json.NewDecoder(r.Body).Decode(&user)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusBadRequest)
 		return
 	}
 
-	err = h.UserService.AddUser(newUser)
+	err = h.userService.CreateUser(user)
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return
@@ -32,8 +32,17 @@ func (h *UserHandler) AddUser(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusCreated)
 }
 
-func (h *UserHandler) GetAllUsers(w http.ResponseWriter, r *http.Request) {
-	users := h.UserService.GetAllUsers()
+func (h *UserHandler) GetUsers(w http.ResponseWriter, r *http.Request) {
+	users, err := h.userService.GetUsers()
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(users)
+	err = json.NewEncoder(w).Encode(users)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 }

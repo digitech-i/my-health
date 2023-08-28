@@ -5,16 +5,18 @@ import (
 	"myhealth/backend/user/internal/repository"
 )
 
-type UserService struct{}
-
-func NewUserService() *UserService {
-	return &UserService{}
+type UserService struct {
+	userRepository repository.UserRepository
 }
 
-func (s *UserService) AddUser(user model.User) error {
-	return repository.SaveUser(user)
+func NewUserService(userRepository repository.UserRepository) *UserService {
+	return &UserService{userRepository: userRepository}
 }
 
-func (s *UserService) GetAllUsers() []model.User {
-	return repository.GetAllUsers()
+func (s *UserService) CreateUser(user model.User) error {
+	return s.userRepository.SaveUser(user)
+}
+
+func (s *UserService) GetUsers() ([]model.User, error) {
+	return s.userRepository.GetAllUsers()
 }
